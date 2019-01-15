@@ -1,0 +1,16 @@
+{
+  "name": "projekt_kviz_backend_v3",
+  "version": "1.0.0",
+  "description": "Projekt za Razvoj vseprisotnih informacijskih resitev",
+  "main": "server.js",
+  "author": "Ivona Čolaković",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "ip": "^1.1.5",
+    "morgan": "^1.9.1",
+    "mysql": "^2.16.0"
+  }
+}
