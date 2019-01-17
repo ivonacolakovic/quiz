@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // define app port and ip
 const app_port = 5555;
 // const app_ip = ip.address();
-const app_ip = "192.168.1.108";
+const app_ip = "164.8.207.129";
 
 // mysql db settings
 const db = mysql.createConnection({
@@ -57,10 +57,10 @@ app.get("/", (req, res) => {
 app.get("/api/core/check_data", (req, res) => {
 	const categoryIds = [9, 11, 12, 18, 21, 22];
 
-	db.query("SELECT * FROM vprasanje", (error, results, fields) => {
-		if (error) {
+	db.query("SELECT * FROM vprasanje", (error0, results, fields) => {
+		if (error0) {
 			res.status(500);
-			throw error;
+			throw error0;
 		}
 
 		// if no results == our db is empty
@@ -100,21 +100,28 @@ app.get("/api/core/check_data", (req, res) => {
 						 */
 
 						// get fk za kategorijo
-						db.query(`SELECT idkategorija FROM kategorija WHERE kategorija = "${qd.category}";`, (error, cat_result) => {
-							if (error) throw error;
-							insertObj.fk_kategorija = cat_result[0];
+						db.query(`SELECT idkategorija FROM kategorija WHERE kategorija = "${qd.category}";`, (error1, cat_result) => {
+							if (error1) throw error1;
+							console.log(cat_result);
+							insertObj.fk_kategorija = cat_result[0].idkategorija;
 
 							// get fk za tezavnost
-							db.query(`SELECT idtezavnost FROM tezavnost WHERE tezavnost = "${qd.difficulty}";`, (error, diff_result) => {
-								if (error) throw error;
-								insertObj.fk_tezavnost = diff_result[0];
+							db.query(`SELECT idtezavnost FROM tezavnost WHERE tezavnost = "${qd.difficulty}";`, (error2, diff_result) => {
+								if (error2) throw error2;
+								console.log(diff_result);
+								insertObj.fk_tezavnost = diff_result[0].idtezavnost;
 
 								// get fk for type
-								db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}"`, (error, type_result) => {
-									if (error) throw error;
-									insertObj.fk_tip_vprasanj = type_result[0];
+								db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}"`, (error3, type_result) => {
+									if (error3) throw error3;
+									console.log(type_result);
+									insertObj.fk_tip_vprasanj = type_result[0].idtip_vprasanj;
 
-									const b = 2;
+									db.query("INSERT INTO vprasanje SET ?", insertObj, function(error4, insert_result) {
+										if (error4) throw error4;
+										// Neat!
+										console.log(insert_result);
+									});
 								});
 							});
 						});
@@ -138,26 +145,43 @@ app.get("/api/game/regular/get_questions", (req, res) => {
 		hard: [],
 	};
 
-	for (let item in questions) {
-		db.query(
-			`
-		SELECT * FROM vprasanje
-		WHERE fk_tip_vprasanj = (
-			SELECT idtip_vprasanj FROM tip_vprasanj
-			WHERE tip_vprasanj = "${item}"
-		) ORDER BY rand() LIMIT 10;
-	`,
-			(error, results) => {
-				if (error) {
-					console.log(`Error while selecting ${item} questions!`);
-					res.status(500);
-					throw error;
-				}
-				questions[item] = results;
-			},
-		);
-	}
-	res.status(200).send(questions);
+	// object keys map => dobis nazaj vsak key v `questions` (easy, medium, hard)
+	// map through each key and select corresponding `tezavnost`
+	var promises = Object.keys(questions).map(function(item) {
+		// for each key return a promise
+		return new Promise(function(resolve, reject) {
+			// run db query for each key in `questions`
+			db.query(
+				`
+			SELECT * FROM vprasanje
+			WHERE fk_tezavnost = (
+				SELECT idtezavnost FROM tezavnost
+				WHERE tezavnost LIKE "${item}"
+			) ORDER BY rand() LIMIT 10;
+			`,
+				(error, results) => {
+					if (error) {
+						console.log(`Error while selecting ${item} questions!`);
+						res.status(500);
+						reject(error); // if the current query errors out, reject the promise
+						throw error;
+					}
+					questions[item] = results;
+					resolve(); // if the current query runs fine, resolve the promise
+				},
+			);
+		});
+	});
+
+	// when all promises are fulfilled, send response back to client
+	Promise.all(promises)
+		.then(() => {
+			res.status(200).send(questions);
+		})
+		.catch((err) => {
+			// if not all promises fulfilled, send error 500 to client
+			res.status(500).send([]);
+		});
 });
 
 /**
@@ -165,7 +189,7 @@ app.get("/api/game/regular/get_questions", (req, res) => {
  * 1. tezavnost
  * 2. kategorija
  * 3. tip_vprasanj
- * url =	serverip:serverport/api/game/custom/query?tezavnost=hard&kategorija=sport&tip_vprasanj=multiple choice
+ * url =	serverip:serverport/api/game/custom/query?tezavnost=hard&kategorija=sport&tip_vprasanj=multiple
  */
 app.get("/api/game/custom/query", (req, res) => {
 	// url + query
@@ -203,6 +227,8 @@ app.get("/api/game/custom/query", (req, res) => {
 /**
  * UTILS START
  */
+
+// call foreign api route
 const apiCallService = async (url) => {
 	const res = await axios.get(url);
 	const { data } = await res;
