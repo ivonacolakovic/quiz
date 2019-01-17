@@ -1,6 +1,6 @@
 # quiz
 
-GET / - server running
+GET serverip:serverport/ - server running
 
 GET serverip:serverport/api/game/regular/get_questions - play regular quiz with 3 levels
 
