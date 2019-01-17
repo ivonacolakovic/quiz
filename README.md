@@ -8,7 +8,9 @@ GET serverip:serverport/api/game/custom/query - get questions that match given p
 
  	example: serverip:serverport/api/game/custom/query?tezavnost=hard&kategorija=sport&tip_vprasanj=multiple
   tip_vprasanj: multiple, boolean
+  
   kategorija: sport, general knowledge, science: computers, entertainment: music, entertainment: film, geography
+  
   tezavnost: hard, medium, easy
   
 GET api/core/check_data - fill database
