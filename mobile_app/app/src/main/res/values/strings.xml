@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Kviz</string>
+    <string name="category_prompt">Choose a category</string>
+
+    <string-array name="category_arrays">
+        <item>Any Category</item>
+        <item>Sports</item>
+        <item>General Knowledge</item>
+        <item>Geography</item>
+        <item>Computers</item>
+        <item>Books</item>
+        <item>Film</item>
+    </string-array>
+    <string-array name="difficulty_arrays">
+        <item>Any Difficulty</item>
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+    <string-array name="type_arrays">
+        <item>Any Type</item>
+        <item>Multiple Choice</item>
+        <item>True/False</item>
+    </string-array>
 </resources>
