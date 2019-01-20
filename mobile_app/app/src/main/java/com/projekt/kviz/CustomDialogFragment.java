@@ -15,13 +15,28 @@ public class CustomDialogFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         Bundle bundle = getArguments();
         String odgovor = bundle.getString("odgovor", "");
-        builder.setMessage(odgovor)
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+
+        if(odgovor == "Game over!"){
+            builder.setMessage(odgovor)
+                    .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+
+                            startActivity(intent);
+                        }
+                    });
+        }else{
+            builder.setMessage(odgovor)
+                    .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        }
+
         return builder.create();
 
     }

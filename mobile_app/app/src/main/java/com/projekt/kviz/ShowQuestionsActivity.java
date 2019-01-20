@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class ShowQuestionsActivity extends AppCompatActivity {
 
@@ -51,6 +52,8 @@ public class ShowQuestionsActivity extends AppCompatActivity {
     TextView coin;
     JSONObject vprasanjaZaEnNivo = null;
     boolean provera;
+
+    ArrayList<JSONObject> vsaVprasanja = new ArrayList<>();
 
     int steviloPravilnihOdgovorov = 0;
     int steviloNapacnihOdgovorov = 0;
@@ -217,11 +220,15 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
 */
     }
-    public void shuffleArray(ArrayList<String> array, JSONArray data, int position) throws JSONException {
-        array.add(data.getJSONObject(position).getString("pravilen_odgovor"));
-        array.add(data.getJSONObject(position).getString("nepravilen_odgovor1"));
-        array.add(data.getJSONObject(position).getString("nepravilen_odgovor2"));
-        array.add(data.getJSONObject(position).getString("nepravilen_odgovor3"));
+    public void shuffleArray(ArrayList<String> array, JSONObject data) throws JSONException {
+        if(!data.getString("nepravilen_odgovor2").equals(null)){
+            array.add(data.getString("nepravilen_odgovor2"));
+        }
+        if(!data.getString("nepravilen_odgovor3").equals(null)){
+            array.add(data.getString("nepravilen_odgovor3"));
+        }
+        array.add(data.getString("pravilen_odgovor"));
+        array.add(data.getString("nepravilen_odgovor1"));
 
         Collections.shuffle(array);
 
@@ -256,6 +263,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            coin.setText(String.valueOf(numberOfCoins));
             try {
                 questions = new JSONObject(s);
                 provera = true;
@@ -273,79 +281,34 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                for(int i =0; i<easyQ.length();i++){
-                    ArrayList<String> shuffled = new ArrayList<>();
-
-                    try {
-                        Log.d("QUESTION", easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
-                        showData.setText(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
-                        //showData.append(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
-                        Log.d("QUESTIONP", easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor"));
-                        pravilenOdgovor = easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
-                        shuffleArray(shuffled, easyQ, stevecZaForZanke);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.d("ANSWER1", shuffled.get(0));
-                    Log.d("ANSWER2", shuffled.get(1));
-                    Log.d("ANSWER3", shuffled.get(2));
-                    Log.d("ANSWER4", shuffled.get(3));
-                    answer1.setText(shuffled.get(0));
-                    answer2.setText(shuffled.get(1));
-                    answer3.setText(shuffled.get(2));
-                    answer4.setText(shuffled.get(3));
+                for(int i = 0; i<easyQ.length(); i++){
+                    vsaVprasanja.add(easyQ.getJSONObject(i));
                 }
-
-                // if, ki preveri ali uporabnik lahko gre na naslednji nivo - če je število pravilnih enako 9
-                if(steviloPravilnihOdgovorov == 10){
-                    stevecZaForZanke = 0;
-                    steviloNapacnihOdgovorov = 0;
-                    steviloPravilnihOdgovorov = 0;
-                    level = 2; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
-                    for(; stevecZaForZanke<mediumQ.length();){
-                        ArrayList<String> shuffled = new ArrayList<>();
-
-                        try {
-                            showData.setText(mediumQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
-
-                            pravilenOdgovor = mediumQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
-                            shuffleArray(shuffled, mediumQ, stevecZaForZanke);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        answer1.setText(shuffled.get(0));
-                        answer2.setText(shuffled.get(1));
-                        answer3.setText(shuffled.get(2));
-                        answer4.setText(shuffled.get(3));
-                    }
-
+                for(int i = 0; i<mediumQ.length(); i++){
+                    vsaVprasanja.add(mediumQ.getJSONObject(i));
                 }
-
-                if(steviloPravilnihOdgovorov == 10){
-                    stevecZaForZanke = 0;
-                    steviloNapacnihOdgovorov = 0;
-                    steviloPravilnihOdgovorov = 0;
-                    level = 3; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
-                    for(; stevecZaForZanke<hardQ.length();){
-                        ArrayList<String> shuffled = new ArrayList<>();
-
-                        try {
-                            showData.setText(hardQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
-                            pravilenOdgovor = hardQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
-                            shuffleArray(shuffled, hardQ, stevecZaForZanke);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        answer1.setText(shuffled.get(0));
-                        answer2.setText(shuffled.get(1));
-                        answer3.setText(shuffled.get(2));
-                        answer4.setText(shuffled.get(3));
-                    }
-
+                for(int i = 0; i<hardQ.length(); i++){
+                    vsaVprasanja.add(mediumQ.getJSONObject(i));
                 }
+                ArrayList<String> shuffled = new ArrayList<>();
+                try {
+                    Log.d("QUESTION", vsaVprasanja.get(stevecZaForZanke).getString("vprasanje"));
+                    showData.setText(vsaVprasanja.get(stevecZaForZanke).getString("vprasanje"));
+                    //showData.append(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                    Log.d("QUESTIONP", vsaVprasanja.get(stevecZaForZanke).getString("pravilen_odgovor"));
+                    pravilenOdgovor = vsaVprasanja.get(stevecZaForZanke).getString("pravilen_odgovor");
+                    shuffleArray(shuffled, vsaVprasanja.get(stevecZaForZanke));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("ANSWER1", shuffled.get(0));
+                Log.d("ANSWER2", shuffled.get(1));
+                Log.d("ANSWER3", shuffled.get(2));
+                Log.d("ANSWER4", shuffled.get(3));
+                answer1.setText(shuffled.get(0));
+                answer2.setText(shuffled.get(1));
+                answer3.setText(shuffled.get(2));
+                answer4.setText(shuffled.get(3));
 
                 //  }
 
@@ -371,6 +334,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                             }else{
                                 numberOfCoins = numberOfCoins + 15;
                             }
+                            coin.setText(String.valueOf(numberOfCoins));
 
                         }else if((answer1.isChecked() && answer1.getText()!=pravilenOdgovor) || (answer2.isChecked() && answer2.getText()!=pravilenOdgovor) ||
                                 (answer3.isChecked() && answer3.getText()!=pravilenOdgovor) || (answer4.isChecked() && answer4.getText()!=pravilenOdgovor)){
@@ -382,6 +346,8 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), odgovor,
                                 Toast.LENGTH_LONG).show();
 
+                        ponastaviVprasanja();
+
 
                     }
                 });
@@ -392,6 +358,9 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                         String odgovor = "Pravilen odgovor je: " + pravilenOdgovor;
                         if(numberOfCoins <5){
                             odgovor = "Ni dovolj kovančkov!";
+                        }else{
+                            numberOfCoins = numberOfCoins - 5;
+                            coin.setText(String.valueOf(numberOfCoins));
                         }
                         FragmentManager fm = getSupportFragmentManager();
 
@@ -438,6 +407,124 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             String result = buffer.readLine();
             Log.d("DOWNLOADED: ", result);
             return result;
+        }
+    }
+
+    public void ponastaviVprasanja(){
+        String odgovor;
+        if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov == 9){
+            level = 2;
+            steviloPravilnihOdgovorov = 0;
+            steviloNapacnihOdgovorov = 0;
+            odgovor = "Level 2!";
+            FragmentManager fm = getSupportFragmentManager();
+
+            CustomDialogFragment newFragment = new CustomDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("odgovor", odgovor);
+
+            newFragment.setArguments(bundle);
+            newFragment.show(fm, "custom_dialog");
+
+        }else if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov < 9){
+            odgovor = "Game over!";
+            FragmentManager fm = getSupportFragmentManager();
+
+            CustomDialogFragment newFragment = new CustomDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("odgovor", odgovor);
+
+            newFragment.setArguments(bundle);
+            newFragment.show(fm, "custom_dialog");
+
+        }
+
+
+        if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov == 9){
+            level = 3;
+            steviloPravilnihOdgovorov = 0;
+            steviloNapacnihOdgovorov = 0;
+            odgovor = "Level 3!";
+            FragmentManager fm = getSupportFragmentManager();
+
+            CustomDialogFragment newFragment = new CustomDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("odgovor", odgovor);
+
+            newFragment.setArguments(bundle);
+            newFragment.show(fm, "custom_dialog");
+
+        }else if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov < 9){
+            odgovor = "Game over!";
+            FragmentManager fm = getSupportFragmentManager();
+
+            CustomDialogFragment newFragment = new CustomDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("odgovor", odgovor);
+
+            newFragment.setArguments(bundle);
+            newFragment.show(fm, "custom_dialog");
+
+        }
+
+        if(stevecZaForZanke == 29 && steviloPravilnihOdgovorov == 9){
+            odgovor = "Winner!";
+            FragmentManager fm = getSupportFragmentManager();
+
+            CustomDialogFragment newFragment = new CustomDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("odgovor", odgovor);
+
+            newFragment.setArguments(bundle);
+            newFragment.show(fm, "custom_dialog");
+
+        }
+
+        if (answer1.isChecked()) {
+            answer1.setChecked(false);
+        }
+        if (answer2.isChecked()) {
+            answer2.setChecked(false);
+        }
+        if (answer3.isChecked()) {
+            answer3.setChecked(false);
+        }
+        if (answer4.isChecked()) {
+            answer4.setChecked(false);
+        }
+
+
+        ArrayList<String> shuffled = new ArrayList<>();
+        try {
+            Log.d("QUESTION", vsaVprasanja.get(stevecZaForZanke).getString("vprasanje"));
+            showData.setText(vsaVprasanja.get(stevecZaForZanke).getString("vprasanje"));
+            //showData.append(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+            Log.d("QUESTIONP", vsaVprasanja.get(stevecZaForZanke).getString("pravilen_odgovor"));
+            pravilenOdgovor = vsaVprasanja.get(stevecZaForZanke).getString("pravilen_odgovor");
+            shuffleArray(shuffled, vsaVprasanja.get(stevecZaForZanke));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("ANSWER1", shuffled.get(0));
+        Log.d("ANSWER2", shuffled.get(1));
+        Log.d("ANSWER3", shuffled.get(2));
+        Log.d("ANSWER4", shuffled.get(3));
+
+        if(shuffled.size() == 2){
+            answer1.setText(shuffled.get(0));
+            answer2.setText(shuffled.get(1));
+            answer3.setVisibility(View.GONE);
+            answer4.setVisibility(View.GONE);
+        }else{
+            answer1.setText(shuffled.get(0));
+            answer2.setText(shuffled.get(1));
+            answer3.setText(shuffled.get(2));
+            answer4.setText(shuffled.get(3));
         }
     }
 
