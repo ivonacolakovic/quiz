@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // define app port and ip
 const app_port = 5555;
 // const app_ip = ip.address();
-const app_ip = "164.8.207.129";
+const app_ip = "164.8.207.4";
 
 // mysql db settings
 const db = mysql.createConnection({
@@ -112,7 +112,7 @@ app.get("/api/core/check_data", (req, res) => {
 								insertObj.fk_tezavnost = diff_result[0].idtezavnost;
 
 								// get fk for type
-								db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}"`, (error3, type_result) => {
+								db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}";`, (error3, type_result) => {
 									if (error3) throw error3;
 									console.log(type_result);
 									insertObj.fk_tip_vprasanj = type_result[0].idtip_vprasanj;
@@ -206,7 +206,7 @@ app.get("/api/game/custom/query", (req, res) => {
 	let hasAnd = false;
 
 	for (let key in parsedQs) {
-		dbQuery += `${hasAnd ? " AND " : " "}${key} = ${parsedQs[key]}`;
+		dbQuery += `${hasAnd ? " AND " : " "}fk_${key} = (SELECT id${key} FROM ${key} WHERE ${key} LIKE "${parsedQs[key]}")`;
 		hasAnd = true;
 	}
 	dbQuery += " ORDER BY rand() LIMIT 20;";
