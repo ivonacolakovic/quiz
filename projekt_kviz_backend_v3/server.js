@@ -68,69 +68,90 @@ app.get("/api/core/check_data", (req, res) => {
 			let baseUrl;
 
 			// get questions from each category with id = i
-			for (let i in categoryIds) {
-				// create url
-				baseUrl = `https://opentdb.com/api.php?amount=50&category=${categoryIds[i]}`;
+			var promises = categoryIds.map((item) => {
+				return new Promise((resolve, reject) => {
+					// create url
+					baseUrl = `https://opentdb.com/api.php?amount=50&category=${item}`;
 
-				// 2 sec timeout between each request
-				setTimeout(async () => {
 					// wait for response
-					const data = await apiCallService(baseUrl);
+					apiCallService(baseUrl)
+						.then((data) => {
+							// dereference from result
+							const { results } = data;
 
-					// dereference from result
-					const { results } = data;
+							// insert each object from result to db
+							for (let item in results) {
+								const qd = results[item]; // qd = question data
+								let insertObj = {
+									fk_kategorija: null,
+									fk_tip_vprasanj: null,
+									fk_tezavnost: null,
+									vprasanje: qd.question,
+									pravilen_odgovor: qd.correct_answer,
+									nepravilen_odgovor1: qd.incorrect_answers[0] ? qd.incorrect_answers[0] : null,
+									nepravilen_odgovor2: qd.incorrect_answers[1] ? qd.incorrect_answers[1] : null,
+									nepravilen_odgovor3: qd.incorrect_answers[2] ? qd.incorrect_answers[2] : null,
+								};
 
-					// insert each object from result to db
-					for (let item in results) {
-						const qd = results[item]; // qd = question data
-						let insertObj = {
-							fk_kategorija: null,
-							fk_tip_vprasanj: null,
-							fk_tezavnost: null,
-							vprasanje: qd.question,
-							pravilen_odgovor: qd.correct_answer,
-							nepravilen_odgovor1: qd.incorrect_answers[0] ? qd.incorrect_answers[0] : null,
-							nepravilen_odgovor2: qd.incorrect_answers[1] ? qd.incorrect_answers[1] : null,
-							nepravilen_odgovor3: qd.incorrect_answers[2] ? qd.incorrect_answers[2] : null,
-						};
+								/**
+								 * DISCLAIMER:
+								 * THIS IS NOT THE RIGHT WAY! :D :D :D
+								 */
 
-						/**
-						 * DISCLAIMER:
-						 * THIS IS NOT THE RIGHT WAY! :D :D :D
-						 */
+								// get fk za kategorijo
+								db.query(`SELECT idkategorija FROM kategorija WHERE kategorija = "${qd.category}";`, (error1, cat_result) => {
+									if (error1) {
+										reject(error1);
+										throw error1;
+									}
+									insertObj.fk_kategorija = cat_result[0].idkategorija;
 
-						// get fk za kategorijo
-						db.query(`SELECT idkategorija FROM kategorija WHERE kategorija = "${qd.category}";`, (error1, cat_result) => {
-							if (error1) throw error1;
-							console.log(cat_result);
-							insertObj.fk_kategorija = cat_result[0].idkategorija;
+									// get fk za tezavnost
+									db.query(`SELECT idtezavnost FROM tezavnost WHERE tezavnost = "${qd.difficulty}";`, (error2, diff_result) => {
+										if (error2) {
+											reject(error2);
+											throw error2;
+										}
+										insertObj.fk_tezavnost = diff_result[0].idtezavnost;
 
-							// get fk za tezavnost
-							db.query(`SELECT idtezavnost FROM tezavnost WHERE tezavnost = "${qd.difficulty}";`, (error2, diff_result) => {
-								if (error2) throw error2;
-								console.log(diff_result);
-								insertObj.fk_tezavnost = diff_result[0].idtezavnost;
+										// get fk for type
+										db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}";`, (error3, type_result) => {
+											if (error3) {
+												reject(error3);
+												throw error3;
+											}
+											insertObj.fk_tip_vprasanj = type_result[0].idtip_vprasanj;
 
-								// get fk for type
-								db.query(`SELECT idtip_vprasanj FROM tip_vprasanj WHERE tip_vprasanj = "${qd.type}";`, (error3, type_result) => {
-									if (error3) throw error3;
-									console.log(type_result);
-									insertObj.fk_tip_vprasanj = type_result[0].idtip_vprasanj;
-
-									db.query("INSERT INTO vprasanje SET ?", insertObj, function(error4, insert_result) {
-										if (error4) throw error4;
-										// Neat!
-										console.log(insert_result);
+											db.query("INSERT INTO vprasanje SET ?", insertObj, function(error4, insert_result) {
+												if (error4) {
+													reject(error4);
+													throw error4;
+												}
+												resolve();
+											});
+										});
 									});
 								});
-							});
+							}
+						})
+						.catch((err) => {
+							console.log(err);
+							reject(err);
 						});
-					}
-				}, 2000);
-			}
+				});
+			});
+
+			Promise.all(promises)
+				.then(() => {
+					res.status(200).send("Success!");
+				})
+				.catch((err) => {
+					console.log(err);
+					res.status(500).send(`Err ${err}`);
+				});
 		} else {
 			// data is already in db
-			const a = 1;
+			res.status(200).send("Data is already in db!");
 		}
 	});
 });
@@ -228,11 +249,40 @@ app.get("/api/game/custom/query", (req, res) => {
  * UTILS START
  */
 
-// call foreign api route
-const apiCallService = async (url) => {
-	const res = await axios.get(url);
-	const { data } = await res;
-	return data;
+/**
+ *
+ * @param {1} url api url
+ * @param {2} method defaults to "get"
+ * @param {3} params if method is post, then you can send params along
+ */
+const apiCallService = async (url, method = "get", params = {}) => {
+	return new Promise(function(resolve, reject) {
+		const _mthd = method.toUpperCase();
+		if (_mthd === "GET") {
+			axios
+				.get(url)
+				.then((res) => {
+					resolve(res.data);
+				})
+				.catch((err) => {
+					console.log(err);
+					reject(err);
+				});
+		} else if (_mthd === "POST") {
+			axios
+				.post(url, params)
+				.then((res) => {
+					resolve(res.data);
+				})
+				.catch((err) => {
+					console.log(err);
+					reject(err);
+				});
+		} else {
+			console.log("Method not implemented!");
+			reject(err);
+		}
+	});
 };
 
 // run app

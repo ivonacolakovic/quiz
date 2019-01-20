@@ -3,22 +3,22 @@
     <string name="category_prompt">Choose a category</string>
 
     <string-array name="category_arrays">
-        <item>Any Category</item>
+        <item>All categories</item>
         <item>Sports</item>
         <item>General Knowledge</item>
         <item>Geography</item>
-        <item>Computers</item>
-        <item>Books</item>
-        <item>Film</item>
+        <item>Science: Computers</item>
+        <item>Entertainment: Music</item>
+        <item>Entertainment: Film</item>
     </string-array>
     <string-array name="difficulty_arrays">
-        <item>Any Difficulty</item>
+        <item>All difficulties</item>
         <item>Easy</item>
         <item>Medium</item>
         <item>Hard</item>
     </string-array>
     <string-array name="type_arrays">
-        <item>Any Type</item>
+        <item>All types</item>
         <item>Multiple Choice</item>
         <item>True/False</item>
     </string-array>

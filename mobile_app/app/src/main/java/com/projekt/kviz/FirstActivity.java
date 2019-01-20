@@ -36,6 +36,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
     Spinner t = null;
     Activity fa;
    ImageView  vv;
+   private String baseUrl= "http://164.8.207.4:5555/api/game/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         skip = (ImageButton) findViewById(R.id.imageButton1);
 
         play.setOnClickListener(this);
-        skip.setOnClickListener(this);
+        //skip.setOnClickListener(this);
     }
 
     @Override
@@ -58,29 +59,37 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             t = (Spinner) findViewById(R.id.tip);
             tez = (Spinner) findViewById(R.id.tezavnost);
             Bundle extra = new Bundle();
-            String url = null;
             String kategorija = null;
             String tip = null;
             String tezavnost = null;
-            kategorija = kat.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            tip = t.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            tezavnost = tez.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            url = "serverip:serverport/api/game/custom/query?tezavnost=" + tezavnost + "&kategorija=" + kategorija + "&tip_vprasanj=" + tip;
-            extra.putString("url", url);
+            kategorija = kat.getSelectedItem().toString();
+            tezavnost = tez.getSelectedItem().toString().toLowerCase();
+            if (t.getSelectedItem().toString().toLowerCase() == "multiple choice"){
+                tip = "multiple";
+            } else if (t.getSelectedItem().toString().toLowerCase() == "true/false"){
+                tip = "boolean";
+            }
+            if (kat.getSelectedItem().toString() == "All categories" && tez.getSelectedItem().toString() == "All difficulties"
+                    && t.getSelectedItem().toString() == "All types"){
+                baseUrl += "regular/get_questions";
+            } else {
+                baseUrl += "custom/query?tezavnost=" + tezavnost + "&kategorija=" + kategorija + "&tip_vprasanj=" + tip;
+            }
+            extra.putString("url", baseUrl);
 
             in.putExtras(extra);
-           // startActivity(in);
+            startActivity(in);
 
             final Dialog dialog = new Dialog(FirstActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
+            //dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
             //dialog.getWindow().setBackgroundDrawable(newColorDrawable(Color.TRANSPARENT));
 
             vv = (ImageView)dialog.findViewById(R.id.image);
 
-            vv.setBackgroundResource(R.drawable.blinka);// Drawable file instead of anim move same file from anim folder to Drawable before use..
+            //vv.setBackgroundResource(R.drawable.blinka);// Drawable file instead of anim move same file from anim folder to Drawable before use..
 
-            final AnimationDrawable animcon = (AnimationDrawable) vv.getBackground(); // instead of getDrawable() use this
+/*            final AnimationDrawable animcon = (AnimationDrawable) vv.getBackground(); // instead of getDrawable() use this
             dialog.setCancelable(true);
 
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -107,28 +116,9 @@ public class FirstActivity extends Activity implements View.OnClickListener {
 
 
                 }
-            }.start();
+            }.start();*/
 
 
-        } else if (v == skip) {
-
-            Intent in = new Intent(getApplicationContext(), ShowQuestionsActivity.class);
-
-            kat = (Spinner) findViewById(R.id.kategorija);
-            t = (Spinner) findViewById(R.id.tip);
-            tez = (Spinner) findViewById(R.id.tezavnost);
-            Bundle extra = new Bundle();
-            String url = null;
-            String kategorija = null;
-            String tip = null;
-            String tezavnost = null;
-            kategorija = kat.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            tip = t.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            tezavnost = tez.getSelectedItem().toString().toLowerCase().replace(" ", "");
-            url = "serverip:serverport/api/game/regular/get_questions";
-            extra.putString("url", url);
-            in.putExtras(extra);
-            startActivity(in);
         }
         /*final Dialog dialog = new Dialog(this);// add here your class name
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

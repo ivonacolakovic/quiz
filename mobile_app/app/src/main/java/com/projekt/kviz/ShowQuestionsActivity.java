@@ -50,6 +50,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
     Button next;
     TextView coin;
     JSONObject vprasanjaZaEnNivo = null;
+    boolean provera;
 
     int steviloPravilnihOdgovorov = 0;
     int steviloNapacnihOdgovorov = 0;
@@ -65,7 +66,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_questions_activity);
 
-        help = findViewById(R.id.imageButton2);
+     /*   help = findViewById(R.id.imageButton2);
         showData = findViewById(R.id.showData);
         answer1 = findViewById(R.id.answer1);
         answer2 = findViewById(R.id.answer2);
@@ -82,6 +83,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             //TODO: KOD FOR ZANKE PRI LISTANJU PITANJA I ODGOVORA STAVI DA SE I POVEĆA TEK DOK JE GUMB KLIKNUTI, AKO JE VISE LEVELA ONDA SE IZMEĐU LEVELA TREBA PROMIJENITI V NULU OPET
 
         //}else{
+        if(provera) {
             try {
                 easyQ = questions.getJSONArray("easy");
                 mediumQ = questions.getJSONArray("medium");
@@ -89,10 +91,10 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for(; stevecZaForZanke<easyQ.length();){
+            for (; stevecZaForZanke < easyQ.length();) {
                 ArrayList<String> shuffled = new ArrayList<>();
 
-                try {
+                try {Log.d("PITANJE",easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
                     showData.setText(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
                     pravilenOdgovor = easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
                     shuffleArray(shuffled, easyQ, stevecZaForZanke);
@@ -107,12 +109,12 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             }
 
             // if, ki preveri ali uporabnik lahko gre na naslednji nivo - če je število pravilnih enako 9
-            if(steviloPravilnihOdgovorov == 10){
+            if (steviloPravilnihOdgovorov == 10) {
                 stevecZaForZanke = 0;
                 steviloNapacnihOdgovorov = 0;
                 steviloPravilnihOdgovorov = 0;
                 level = 2; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
-                for(; stevecZaForZanke<mediumQ.length();){
+                for (; stevecZaForZanke < mediumQ.length(); ) {
                     ArrayList<String> shuffled = new ArrayList<>();
 
                     try {
@@ -131,12 +133,12 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
             }
 
-            if(steviloPravilnihOdgovorov == 10){
+            if (steviloPravilnihOdgovorov == 10) {
                 stevecZaForZanke = 0;
                 steviloNapacnihOdgovorov = 0;
                 steviloPravilnihOdgovorov = 0;
                 level = 3; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
-                for(; stevecZaForZanke<hardQ.length();){
+                for (; stevecZaForZanke < hardQ.length(); ) {
                     ArrayList<String> shuffled = new ArrayList<>();
 
                     try {
@@ -155,50 +157,49 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
             }
 
-      //  }
+            //  }
 
 
+            //implementacija gumba
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String odgovor = "";
+                    if (answer1.isChecked() == false && answer2.isChecked() == false && answer3.isChecked() == false && answer4.isChecked() == false) {
+                        odgovor = "Izberi enega izmed ponujenih odgovorov!";
+                    } else if ((answer1.isChecked() && answer1.getText() == pravilenOdgovor) || (answer2.isChecked() && answer2.getText() == pravilenOdgovor) ||
+                            (answer3.isChecked() && answer3.getText() == pravilenOdgovor) || (answer4.isChecked() && answer4.getText() == pravilenOdgovor)) {
+                        odgovor = "Odgovor je pravilen!";
+                        stevecZaForZanke++;
+                        steviloPravilnihOdgovorov++;
 
-        //implementacija gumba
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String odgovor = "";
-                if(answer1.isChecked()==false && answer2.isChecked()==false && answer3.isChecked()==false && answer4.isChecked()==false){
-                    odgovor = "Izberi enega izmed ponujenih odgovorov!";
-                }else if((answer1.isChecked() && answer1.getText()==pravilenOdgovor) || (answer2.isChecked() && answer2.getText()==pravilenOdgovor) ||
-                        (answer3.isChecked() && answer3.getText()==pravilenOdgovor) || (answer4.isChecked() && answer4.getText()==pravilenOdgovor)){
-                    odgovor = "Odgovor je pravilen!";
-                    stevecZaForZanke++;
-                    steviloPravilnihOdgovorov++;
+                        if (level == 1) {
+                            numberOfCoins = numberOfCoins + 5;
+                        } else if (level == 2) {
+                            numberOfCoins = numberOfCoins + 10;
+                        } else {
+                            numberOfCoins = numberOfCoins + 15;
+                        }
 
-                    if(level == 1){
-                        numberOfCoins = numberOfCoins + 5;
-                    }else if(level == 2){
-                        numberOfCoins = numberOfCoins + 10;
-                    }else{
-                        numberOfCoins = numberOfCoins + 15;
+                    } else if ((answer1.isChecked() && answer1.getText() != pravilenOdgovor) || (answer2.isChecked() && answer2.getText() != pravilenOdgovor) ||
+                            (answer3.isChecked() && answer3.getText() != pravilenOdgovor) || (answer4.isChecked() && answer4.getText() != pravilenOdgovor)) {
+                        odgovor = "Odgovor je napačen. Pravilen odgovor: " + pravilenOdgovor;
+                        stevecZaForZanke++;
+                        steviloNapacnihOdgovorov++;
                     }
 
-                }else if((answer1.isChecked() && answer1.getText()!=pravilenOdgovor) || (answer2.isChecked() && answer2.getText()!=pravilenOdgovor) ||
-                        (answer3.isChecked() && answer3.getText()!=pravilenOdgovor) || (answer4.isChecked() && answer4.getText()!=pravilenOdgovor)){
-                    odgovor = "Odgovor je napačen. Pravilen odgovor: " + pravilenOdgovor;
-                    stevecZaForZanke++;
-                    steviloNapacnihOdgovorov++;
+                    Toast.makeText(getApplicationContext(), odgovor,
+                            Toast.LENGTH_LONG).show();
+
+
                 }
-
-                Toast.makeText(getApplicationContext(), odgovor,
-                        Toast.LENGTH_LONG).show();
-
-
-            }
-        });
+            });
 
             help.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String odgovor = "Pravilen odgovor je: " + pravilenOdgovor;
-                    if(numberOfCoins <5){
+                    if (numberOfCoins < 5) {
                         odgovor = "Ni dovolj kovančkov!";
                     }
                     FragmentManager fm = getSupportFragmentManager();
@@ -212,9 +213,9 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                     newFragment.show(fm, "custom_dialog");
                 }
             });
+        }
 
-
-
+*/
     }
     public void shuffleArray(ArrayList<String> array, JSONArray data, int position) throws JSONException {
         array.add(data.getJSONObject(position).getString("pravilen_odgovor"));
@@ -225,14 +226,23 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         Collections.shuffle(array);
 
     }
-/*
+
     @Override
     protected void onStart() {
         super.onStart();
+        provera = false;
         //String url = getIntent().getStringExtra("url");
-        new DownloadDataTask(url).execute();
+        help = findViewById(R.id.imageButton2);
+        showData = findViewById(R.id.showData);
+        answer1 = findViewById(R.id.answer1);
+        answer2 = findViewById(R.id.answer2);
+        answer3 = findViewById(R.id.answer3);
+        answer4 = findViewById(R.id.answer4);
+        next = findViewById(R.id.nextButton);
+        coin = findViewById(R.id.coin);
+        new DownloadDataTask("http://164.8.207.4:5555/api/game/regular/get_questions").execute();
     }
-    */
+
 
     private class DownloadDataTask extends AsyncTask<String, Void, String> {
 
@@ -248,6 +258,150 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             super.onPostExecute(s);
             try {
                 questions = new JSONObject(s);
+                provera = true;
+
+                // if(message.equals("izbranLevel")){
+                //TODO: DODAJ TU, ČE UPORABNIK IZBERE SAMO EN LEVEL
+                //TODO: DODAJ, DA SE POVEČA COIN IN DA SE SPREMENI TEXTVIEW ZA COIN
+                //TODO: KOD FOR ZANKE PRI LISTANJU PITANJA I ODGOVORA STAVI DA SE I POVEĆA TEK DOK JE GUMB KLIKNUTI, AKO JE VISE LEVELA ONDA SE IZMEĐU LEVELA TREBA PROMIJENITI V NULU OPET
+
+                //}else{
+                try {
+                    easyQ = questions.getJSONArray("easy");
+                    mediumQ = questions.getJSONArray("medium");
+                    hardQ = questions.getJSONArray("hard");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for(int i =0; stevecZaForZanke<easyQ.length();i++){
+                    ArrayList<String> shuffled = new ArrayList<>();
+
+                    try {
+                        Log.d("QUESTION", easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                        showData.setText(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                        Log.d("QUESTIONP", easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor"));
+                        pravilenOdgovor = easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
+                        shuffleArray(shuffled, easyQ, stevecZaForZanke);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.d("ANSWER1", shuffled.get(0));
+                    Log.d("ANSWER2", shuffled.get(1));
+                    Log.d("ANSWER3", shuffled.get(2));
+                    Log.d("ANSWER4", shuffled.get(3));
+                    answer1.setText(shuffled.get(0));
+                    answer2.setText(shuffled.get(1));
+                    answer3.setText(shuffled.get(2));
+                    answer4.setText(shuffled.get(3));
+                }
+
+                // if, ki preveri ali uporabnik lahko gre na naslednji nivo - če je število pravilnih enako 9
+                if(steviloPravilnihOdgovorov == 10){
+                    stevecZaForZanke = 0;
+                    steviloNapacnihOdgovorov = 0;
+                    steviloPravilnihOdgovorov = 0;
+                    level = 2; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
+                    for(; stevecZaForZanke<mediumQ.length();){
+                        ArrayList<String> shuffled = new ArrayList<>();
+
+                        try {
+                            showData.setText(mediumQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                            pravilenOdgovor = mediumQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
+                            shuffleArray(shuffled, mediumQ, stevecZaForZanke);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        answer1.setText(shuffled.get(0));
+                        answer2.setText(shuffled.get(1));
+                        answer3.setText(shuffled.get(2));
+                        answer4.setText(shuffled.get(3));
+                    }
+
+                }
+
+                if(steviloPravilnihOdgovorov == 10){
+                    stevecZaForZanke = 0;
+                    steviloNapacnihOdgovorov = 0;
+                    steviloPravilnihOdgovorov = 0;
+                    level = 3; //povečamo, da pri kliku na gumb, če je uporabnik pravilo odgovoril dobi večje število kovancev na višjem nivoju
+                    for(; stevecZaForZanke<hardQ.length();){
+                        ArrayList<String> shuffled = new ArrayList<>();
+
+                        try {
+                            showData.setText(hardQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                            pravilenOdgovor = hardQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
+                            shuffleArray(shuffled, hardQ, stevecZaForZanke);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        answer1.setText(shuffled.get(0));
+                        answer2.setText(shuffled.get(1));
+                        answer3.setText(shuffled.get(2));
+                        answer4.setText(shuffled.get(3));
+                    }
+
+                }
+
+                //  }
+
+
+
+                //implementacija gumba
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String odgovor = "";
+                        if(answer1.isChecked()==false && answer2.isChecked()==false && answer3.isChecked()==false && answer4.isChecked()==false){
+                            odgovor = "Izberi enega izmed ponujenih odgovorov!";
+                        }else if((answer1.isChecked() && answer1.getText()==pravilenOdgovor) || (answer2.isChecked() && answer2.getText()==pravilenOdgovor) ||
+                                (answer3.isChecked() && answer3.getText()==pravilenOdgovor) || (answer4.isChecked() && answer4.getText()==pravilenOdgovor)){
+                            odgovor = "Odgovor je pravilen!";
+                            stevecZaForZanke++;
+                            steviloPravilnihOdgovorov++;
+
+                            if(level == 1){
+                                numberOfCoins = numberOfCoins + 5;
+                            }else if(level == 2){
+                                numberOfCoins = numberOfCoins + 10;
+                            }else{
+                                numberOfCoins = numberOfCoins + 15;
+                            }
+
+                        }else if((answer1.isChecked() && answer1.getText()!=pravilenOdgovor) || (answer2.isChecked() && answer2.getText()!=pravilenOdgovor) ||
+                                (answer3.isChecked() && answer3.getText()!=pravilenOdgovor) || (answer4.isChecked() && answer4.getText()!=pravilenOdgovor)){
+                            odgovor = "Odgovor je napačen. Pravilen odgovor: " + pravilenOdgovor;
+                            stevecZaForZanke++;
+                            steviloNapacnihOdgovorov++;
+                        }
+
+                        Toast.makeText(getApplicationContext(), odgovor,
+                                Toast.LENGTH_LONG).show();
+
+
+                    }
+                });
+
+                help.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String odgovor = "Pravilen odgovor je: " + pravilenOdgovor;
+                        if(numberOfCoins <5){
+                            odgovor = "Ni dovolj kovančkov!";
+                        }
+                        FragmentManager fm = getSupportFragmentManager();
+
+                        CustomDialogFragment newFragment = new CustomDialogFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString("odgovor", odgovor);
+
+                        newFragment.setArguments(bundle);
+                        newFragment.show(fm, "custom_dialog");
+                    }
+                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }
