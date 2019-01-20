@@ -273,12 +273,13 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                for(int i =0; stevecZaForZanke<easyQ.length();i++){
+                for(int i =0; i<easyQ.length();i++){
                     ArrayList<String> shuffled = new ArrayList<>();
 
                     try {
                         Log.d("QUESTION", easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
                         showData.setText(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+                        //showData.append(easyQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
                         Log.d("QUESTIONP", easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor"));
                         pravilenOdgovor = easyQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
                         shuffleArray(shuffled, easyQ, stevecZaForZanke);
@@ -307,6 +308,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
                         try {
                             showData.setText(mediumQ.getJSONObject(stevecZaForZanke).getString("vprasanje"));
+
                             pravilenOdgovor = mediumQ.getJSONObject(stevecZaForZanke).getString("pravilen_odgovor");
                             shuffleArray(shuffled, mediumQ, stevecZaForZanke);
                         } catch (JSONException e) {
