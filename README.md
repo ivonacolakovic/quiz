@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # quiz
 
 GET serverip:serverport/ - server running
@@ -14,7 +14,5 @@ GET serverip:serverport/api/game/custom/query - get questions that match given p
   
   tezavnost: hard, medium, easy
   
-GET api/core/check_data - fill database
-=======
-# quiz
->>>>>>> parent of f9fde55... Update README.md
+ GET api/core/check_data - fill database
+
