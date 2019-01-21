@@ -7,28 +7,27 @@
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_width="1000dp"
+        android:layout_height="1000dp">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/imageView"
-        android:layout_width="390dp"
-        android:layout_height="400dp"
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="400dp"
+            android:layout_height="430dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/quiz" />
 
-        android:src="@drawable/quiz" />
-
-    <Button
-        android:id="@+id/playButton"
-        android:ems="10"
-        android:layout_below="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="110dp"
-        android:text="PLAY"
-
-        />
+        <Button
+            android:id="@+id/playButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/imageView"
+            android:layout_marginLeft="145dp"
+            android:layout_marginTop="-27dp"
+            android:layout_marginRight="100dp"
+            android:ems="10"
+            android:text="PLAY" />
     </RelativeLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

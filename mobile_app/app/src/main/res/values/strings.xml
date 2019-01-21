@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Kviz</string>
     <string name="category_prompt">Choose a category</string>
-
+    <string name="gumb">YES</string>
+    <string name="gumbce">NO</string>
+    <string name="view">Choose by your own</string>
     <string-array name="category_arrays">
         <item>All categories</item>
         <item>Sports</item>

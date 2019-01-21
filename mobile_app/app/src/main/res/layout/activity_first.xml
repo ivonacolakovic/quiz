@@ -5,18 +5,34 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="40dp"
+        android:text="@string/view"
+        android:textSize="20dp"
+        android:shadowColor="#00ccff"
+        android:shadowRadius="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:textStyle="bold"
+        android:typeface="serif"
+        />
+
     <Spinner
         android:id="@+id/kategorija"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="40dp"
+
+        android:background="@android:drawable/btn_dropdown"
         android:entries="@array/category_arrays"
-        android:prompt="@string/category_prompt"
-        />
+        android:spinnerMode="dropdown" />
 
     <Spinner
         android:id="@+id/tezavnost"
@@ -48,25 +64,16 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="60dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="0dp"
             android:layout_marginRight="100dp"
             android:layout_marginBottom="40dp"
-            app:srcCompat="@drawable/play"
+            android:background="@drawable/play"
             />
 
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="210dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="40dp"
-            app:srcCompat="@drawable/skip"
-            />
+
     </RelativeLayout>
 
 

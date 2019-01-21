@@ -1,9 +1,13 @@
 package com.projekt.kviz;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -345,6 +350,37 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), odgovor,
                                 Toast.LENGTH_LONG).show();
+                        final Dialog dialog = new Dialog(ShowQuestionsActivity.this);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
+                        //dialog.getWindow().setBackgroundDrawable(newColorDrawable(Color.TRANSPARENT));
+
+                        dialog.setCancelable(true);
+
+
+                        dialog.show();
+
+
+                        final CountDownTimer cdt = new CountDownTimer(1000, 100) {
+
+
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+
+                            }
+                            @Override
+                            public void onFinish() {
+                                // TODO Auto-generated method stub
+
+                                dialog.dismiss();
+
+
+
+                            }
+                        }.start();
+
+
 
                         ponastaviVprasanja();
 
