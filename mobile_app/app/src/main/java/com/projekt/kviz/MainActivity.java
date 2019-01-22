@@ -30,33 +30,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         playButton = (Button) findViewById(R.id.playButton);
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), FirstActivity.class);
-
-                Bundle extra = new Bundle();
-
-                in.putExtras(extra);
-                startActivity(in);
-
-
-            }
-
-        });
-
-
+        playButton.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
         if(v == playButton) {
             Intent in = new Intent(getApplicationContext(), FirstActivity.class);
-
             Bundle extra = new Bundle();
-
             in.putExtras(extra);
             startActivity(in);
         }

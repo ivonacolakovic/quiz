@@ -1,0 +1,12 @@
+﻿0. če nimamo nodejs, inštaliramo nodejs
+1. zaženemo skripto za kreacijo baze v mysql
+2. preverimo naš IP naslov
+3. v projektu "projekt_kviz_backend_v3" poiščemo datoteko server.js, odpremo je v text editoru in v 29. vrstici zapišemo naš IP naslov
+ const app_ip = <ip_naslov>;
+potem shranimo datoteko
+4. zaženemo server s komando ->   node server.js
+5. v browserju vpišemo url na katerem server laufa in pošljemo GET request za polnjenje baze
+ http://<ip_naslov>:5555/api/core/check_data
+6. odpremo projekt "mobile_app" v android studiu in v FirstActivity v 59. vrstici pri spremenljivki baseUrl spremenimo IP naslov v naš IP naslov  
+ String baseUrl= "http://<ip_naslov>:5555/api/game/";
+7. mobilno aplikacijo zdaj lahko zaženemo

@@ -16,12 +16,27 @@
                             <entry key="launcher">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="68" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_launcher_background_1" />
-                                      <entry key="foregroundImage" value="D:\FERI\letnikNo3\quiz_repo\quiz-time-announcement-poster-neon-signboard-vector-21093314.jpg" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_foreground_1" />
-                                      <entry key="outputName" value="ic_launcher_quiz" />
+                                      <entry key="backgroundLayerName" value="ic_launcher_background_2" />
+                                      <entry key="foregroundImage" value="D:\FERI\letnikNo3\quiz_repo\quiz.jpg" />
+                                      <entry key="foregroundLayerName" value="ic_launcher_foreground_2" />
+                                      <entry key="outputName" value="ic_launcher_quiz_time" />
                                     </map>
                                   </option>
                                 </PersistentState>

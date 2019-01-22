@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // define app port and ip
 const app_port = 5555;
 // const app_ip = ip.address();
-const app_ip = "164.8.207.131";
+const app_ip = "164.8.160.242";
 
 // mysql db settings
 const db = mysql.createConnection({
@@ -92,11 +92,6 @@ app.get("/api/core/check_data", (req, res) => {
 									nepravilen_odgovor2: qd.incorrect_answers[1] ? qd.incorrect_answers[1] : null,
 									nepravilen_odgovor3: qd.incorrect_answers[2] ? qd.incorrect_answers[2] : null,
 								};
-
-								/**
-								 * DISCLAIMER:
-								 * THIS IS NOT THE RIGHT WAY! :D :D :D
-								 */
 
 								// get fk za kategorijo
 								db.query(`SELECT idkategorija FROM kategorija WHERE kategorija = "${qd.category}";`, (error1, cat_result) => {

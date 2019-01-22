@@ -15,7 +15,7 @@
             android:layout_width="400dp"
             android:layout_height="430dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/quiz" />
+            android:src="@mipmap/ic_launcher_quiz_time"/>
 
         <Button
             android:id="@+id/playButton"

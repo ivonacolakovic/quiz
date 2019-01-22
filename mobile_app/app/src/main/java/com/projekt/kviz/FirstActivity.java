@@ -51,17 +51,18 @@ public class FirstActivity extends Activity implements View.OnClickListener {
 
     }
 
+    //create on click listener for play button
     @Override
     public void onClick(View v) {
         if (v == play) {
             final Intent in = new Intent(getApplicationContext(), ShowQuestionsActivity.class);
-            String baseUrl= "http://164.8.207.131:5555/api/game/";
+            String baseUrl= "http://164.8.160.242:5555/api/game/";
 
             kat = (Spinner) findViewById(R.id.kategorija);
             tip_vpr = (Spinner) findViewById(R.id.tip);
             tez = (Spinner) findViewById(R.id.tezavnost);
 
-
+            //build url
             Bundle extra = new Bundle();
             String kategorija = null;
             String tip = null;
@@ -105,16 +106,16 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             Log.d("URL", baseUrl);
             in.putExtras(extra);
 
-
+            //create dialog
             final Dialog dialog = new Dialog(FirstActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
             //dialog.getWindow().setBackgroundDrawable(newColorDrawable(Color.TRANSPARENT));
 
             vv = (ImageView)dialog.findViewById(R.id.image);
-
             vv.setBackgroundResource(R.drawable.blinka);// Drawable file instead of anim move same file from anim folder to Drawable before use..
 
+            //set animation on dialog as warning that game is starting
            final AnimationDrawable animcon = (AnimationDrawable) vv.getBackground(); // instead of getDrawable() use this
             dialog.setCancelable(true);
 
@@ -128,23 +129,15 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             yes = dialog.findViewById(R.id.gumb);
             no = dialog.findViewById(R.id.gumbek);
 
-
+            //set countdown for dialog
            final CountDownTimer cdt = new CountDownTimer(4000, 1000) {
-
-
-
                 @Override
                 public void onTick(long millisUntilFinished) {
-
                 }
                 @Override
                 public void onFinish() {
-                    // TODO Auto-generated method stub
-
                     dialog.dismiss();
                     startActivity(in);
-
-
                 }
             }.start();
 
@@ -163,11 +156,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
 
         }
 
-
-
-
     }
-
 
 }
 

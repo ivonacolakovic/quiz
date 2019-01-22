@@ -29,7 +29,6 @@ import java.util.Collections;
 public class ShowQuestionsActivity extends AppCompatActivity {
 
     TextView showData;
-    ArrayList<Question> list;
     JSONArray easyQ;
     JSONArray mediumQ;
     JSONArray hardQ;
@@ -50,6 +49,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
     JSONArray customQuestions;
     JSONObject customQuestion;
     int stevecCustomVprasanj;
+    boolean helpPreverjanje;
 
     ArrayList<JSONObject> vsaVprasanja = new ArrayList<>();
 
@@ -98,7 +98,6 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
     private class DownloadDataTask extends AsyncTask<String, Void, String> {
 
-        ParserTask parser;
         String url;
 
         public DownloadDataTask(String url){
@@ -108,15 +107,13 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            helpPreverjanje = false;
             coin.setText(String.valueOf(numberOfCoins));
             try {
                 if (s.charAt(0) == '{') {
                     //get questions for regular quiz
                     questions = new JSONObject(s);
 
-                    //TODO: DODAJ TU, ČE UPORABNIK IZBERE SAMO EN LEVEL
-                    //TODO: DODAJ, DA SE POVEČA COIN IN DA SE SPREMENI TEXTVIEW ZA COIN
-                    //TODO: KOD FOR ZANKE PRI LISTANJU PITANJA I ODGOVORA STAVI DA SE I POVEĆA TEK DOK JE GUMB KLIKNUTI, AKO JE VISE LEVELA ONDA SE IZMEĐU LEVELA TREBA PROMIJENITI V NULU OPET
                     //create arraylist for each difficulty
                     easyQ = questions.getJSONArray("easy");
                     mediumQ = questions.getJSONArray("medium");
@@ -171,11 +168,11 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                                 steviloPravilnihOdgovorov++;
 
                                 //add coins for correct answer
-                                if (level == 1) {
+                                if (level == 1 && helpPreverjanje == false) {
                                     numberOfCoins = numberOfCoins + 5;
-                                } else if (level == 2) {
+                                } else if (level == 2 && helpPreverjanje == false) {
                                     numberOfCoins = numberOfCoins + 10;
-                                } else {
+                                } else if (helpPreverjanje == false){
                                     numberOfCoins = numberOfCoins + 15;
                                 }
                                 coin.setText(String.valueOf(numberOfCoins));
@@ -190,24 +187,6 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                             //show reply -> correct/incorrect/choose
                             Toast.makeText(getApplicationContext(), odgovor,
                                     Toast.LENGTH_LONG).show();
-                            /*final Dialog dialog = new Dialog(ShowQuestionsActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
-                            //dialog.getWindow().setBackgroundDrawable(newColorDrawable(Color.TRANSPARENT));
-                            dialog.setCancelable(true);
-                            dialog.setTitle(odgovor);
-                            dialog.show();
-
-                            final CountDownTimer cdt = new CountDownTimer(1000, 100) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                }
-
-                                @Override
-                                public void onFinish() {
-                                    dialog.dismiss();
-                                }
-                            }.start();*/
                             //set new question
                             ponastaviVprasanja();
                         }
@@ -246,23 +225,6 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                                 //show reply -> correct/incorrect/choose
                                 Toast.makeText(getApplicationContext(), odgovor,
                                         Toast.LENGTH_LONG).show();
-                                /*final Dialog dialog = new Dialog(ShowQuestionsActivity.this);
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                dialog.setContentView(R.layout.dialog); // change to dialog.setContentView
-                                //dialog.getWindow().setBackgroundDrawable(newColorDrawable(Color.TRANSPARENT));
-                                dialog.setCancelable(true);
-                                dialog.show();
-
-                                final CountDownTimer cdt = new CountDownTimer(1000, 100) {
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        dialog.dismiss();
-                                    }
-                                }.start();*/
                                 //set new question
                                 try {
                                     customQuestion = customQuestions.getJSONObject(stevecCustomVprasanj);
@@ -278,11 +240,12 @@ public class ShowQuestionsActivity extends AppCompatActivity {
                 help.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        helpPreverjanje = true;
                         String odgovor = "Correct answer is: " + pravilenOdgovor;
-                        if (numberOfCoins < 5) {
+                        if (numberOfCoins < 10) {
                             odgovor = "You don't have enough coins!";
                         } else {
-                            numberOfCoins = numberOfCoins - 5;
+                            numberOfCoins = numberOfCoins - 10;
                             coin.setText(String.valueOf(numberOfCoins));
                         }
                         FragmentManager fm = getSupportFragmentManager();
@@ -334,7 +297,8 @@ public class ShowQuestionsActivity extends AppCompatActivity {
 
     public void ponastaviVprasanja(){
         String odgovor;
-        if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov > 9){
+        helpPreverjanje = false;
+        if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov > 7){
             level = 2;
             steviloPravilnihOdgovorov = 0;
             steviloNapacnihOdgovorov = 0;
@@ -349,7 +313,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             newFragment.setArguments(bundle);
             newFragment.show(fm, "custom_dialog");
 
-        }else if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov < 9){
+        }else if(stevecZaForZanke == 9 && steviloPravilnihOdgovorov > 7){
             odgovor = "Game over!";
             FragmentManager fm = getSupportFragmentManager();
 
@@ -363,7 +327,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
         }
 
 
-        if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov > 9){
+        if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov > 7){
             level = 3;
             steviloPravilnihOdgovorov = 0;
             steviloNapacnihOdgovorov = 0;
@@ -378,7 +342,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             newFragment.setArguments(bundle);
             newFragment.show(fm, "custom_dialog");
 
-        }else if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov < 9){
+        }else if(stevecZaForZanke == 19 && steviloPravilnihOdgovorov > 7){
             odgovor = "Game over!";
             FragmentManager fm = getSupportFragmentManager();
 
@@ -391,7 +355,7 @@ public class ShowQuestionsActivity extends AppCompatActivity {
             newFragment.show(fm, "custom_dialog");
         }
 
-        if(stevecZaForZanke == 29 && steviloPravilnihOdgovorov > 9){
+        if(stevecZaForZanke == 29 && steviloPravilnihOdgovorov > 7){
             odgovor = "Conratulations! We have a winner!";
             FragmentManager fm = getSupportFragmentManager();
 
