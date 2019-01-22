@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 // define app port and ip
 const app_port = 5555;
 // const app_ip = ip.address();
-const app_ip = "164.8.207.4";
+const app_ip = "164.8.207.131";
 
 // mysql db settings
 const db = mysql.createConnection({

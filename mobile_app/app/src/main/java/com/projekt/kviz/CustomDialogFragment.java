@@ -16,7 +16,7 @@ public class CustomDialogFragment extends DialogFragment {
         Bundle bundle = getArguments();
         String odgovor = bundle.getString("odgovor", "");
 
-        if(odgovor == "Game over!"){
+        if(odgovor == "Game over!" || odgovor == "You answered all questions." || odgovor == "Congratulations! We have a winner!"){
             builder.setMessage(odgovor)
                     .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                         @Override

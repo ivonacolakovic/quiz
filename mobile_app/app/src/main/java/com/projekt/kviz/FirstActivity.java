@@ -35,10 +35,10 @@ public class FirstActivity extends Activity implements View.OnClickListener {
     Button no = null;
     Spinner kat = null;
     Spinner tez = null;
-    Spinner t = null;
+    Spinner tip_vpr = null;
     Activity fa;
    ImageView  vv;
-   private String baseUrl= "http://164.8.207.4:5555/api/game/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,10 @@ public class FirstActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if (v == play) {
             final Intent in = new Intent(getApplicationContext(), ShowQuestionsActivity.class);
+            String baseUrl= "http://164.8.207.131:5555/api/game/";
 
             kat = (Spinner) findViewById(R.id.kategorija);
-            t = (Spinner) findViewById(R.id.tip);
+            tip_vpr = (Spinner) findViewById(R.id.tip);
             tez = (Spinner) findViewById(R.id.tezavnost);
 
 
@@ -67,19 +68,41 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             String tezavnost = null;
             kategorija = kat.getSelectedItem().toString();
             tezavnost = tez.getSelectedItem().toString().toLowerCase();
-            if (t.getSelectedItem().toString().toLowerCase() == "multiple choice"){
+            if (tip_vpr.getSelectedItem().toString().toLowerCase().equals("multiple choice")){
                 tip = "multiple";
-            } else if (t.getSelectedItem().toString().toLowerCase() == "true/false"){
+            } else if (tip_vpr.getSelectedItem().toString().toLowerCase().equals("true/false")){
                 tip = "boolean";
             }
-            if (kat.getSelectedItem().toString() == "All categories" && tez.getSelectedItem().toString() == "All difficulties"
-                    && t.getSelectedItem().toString() == "All types"){
+            if (kat.getSelectedItem().toString().equals("All categories") && tez.getSelectedItem().toString().equals("All difficulties")
+                    && tip_vpr.getSelectedItem().toString().equals("All types")){
                 baseUrl += "regular/get_questions";
             } else {
-                baseUrl += "custom/query?tezavnost=" + tezavnost + "&kategorija=" + kategorija + "&tip_vprasanj=" + tip;
+                baseUrl += "custom/query?";
+                boolean and = false;
+                if (!tezavnost.contains("all")){
+                    if (and){
+                        baseUrl += "&";
+                    }
+                    baseUrl += "tezavnost="+tezavnost;
+                    and = true;
+                }
+                if (!kategorija.contains("All")){
+                    if (and){
+                        baseUrl += "&";
+                    }
+                    baseUrl += "kategorija="+kategorija;
+                    and = true;
+                }
+                if (tip != null && !tip.contains("all")){
+                    if (and){
+                        baseUrl += "&";
+                    }
+                    baseUrl += "tip_vprasanj="+tip;
+                    and = true;
+                }
             }
             extra.putString("url", baseUrl);
-
+            Log.d("URL", baseUrl);
             in.putExtras(extra);
 
 

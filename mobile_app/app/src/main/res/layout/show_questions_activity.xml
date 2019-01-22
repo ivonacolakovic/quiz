@@ -8,9 +8,13 @@
     android:padding="24dp">
 
     <RelativeLayout
+        android:id="@+id/relLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageButton2">
         <TextView
             android:id="@+id/coin"
             android:layout_width="wrap_content"
@@ -33,7 +37,9 @@
             android:layout_marginStart="304dp"
             android:layout_marginLeft="304dp"
             android:layout_marginTop="1dp"
+            android:layout_toRightOf="@id/coin"
             app:srcCompat="@drawable/coin" />
+    </RelativeLayout>
 
         <ImageButton
             android:id="@+id/imageButton2"
@@ -64,6 +70,7 @@
     <Button
         android:id="@+id/nextButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/nextQuestion"/>
 
 </LinearLayout>
